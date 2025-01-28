@@ -1,6 +1,7 @@
 import { Transacao } from "./transacao/Transacao.js";
 import { TipoTransacao } from "./transacao/TipoTransacao.js";
 import { GrupoTransacao } from "./transacao/GrupoTransacao.js";
+import SaldoComponent from "../components/saldo-component.js";
 
 let saldo: number = JSON.parse(localStorage.getItem("saldo")) || 0;
 const transacoes: Transacao[] = JSON.parse(localStorage.getItem("transacoes"), (key: string, value: string) => {
@@ -19,6 +20,7 @@ function debitar(valor: number): void {
     }
 
     saldo -= valor;
+    SaldoComponent.atualizar();
     localStorage.setItem("saldo", saldo.toString());
 }
 
@@ -28,6 +30,8 @@ function depositar(valor: number): void {
     }
 
     saldo += valor;
+    SaldoComponent.atualizar();
+
     localStorage.setItem("saldo", saldo.toString());
 }
 
