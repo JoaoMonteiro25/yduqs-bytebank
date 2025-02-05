@@ -1,5 +1,4 @@
-import { Transacao } from "./Transacao.js";
-
+import Transacao from "../../Model/Transacao";
 export type GrupoTransacao = {
     label: string;
     transacoes: Transacao[];

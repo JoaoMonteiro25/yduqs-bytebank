@@ -1,54 +1,53 @@
-import Conta from "../types/Conta.js";
+import Conta from "../Model/Conta.js";
 import { FormatoData } from "../types/FormatoData.js";
 import { GrupoTransacao } from "../types/transacao/GrupoTransacao.js";
 import { formatarMoeda, formatarData } from "../utils/formatters.js";
 
-
 const elementoRegistroTransacoesExtrato: HTMLElement = document.querySelector(".extrato .registro-transacoes");
+function gerarExtrato(): void
+{
+    let conta = new Conta();
+    let gruposTransacoes: GrupoTransacao[] = conta.getGruposTransacoes();
 
-extratoConta();
-
-function extratoConta () : void{
-    const gruposTransacoes: GrupoTransacao[] = Conta.getGruposTransacoes();
     elementoRegistroTransacoesExtrato.innerHTML = "";
-    let htmlRegistroTransacoes: string = "";
 
-    for (let grupoTransacao of gruposTransacoes)
-    {
-        let htmlTransacaoItem: string = "";
-        for (let transacao of grupoTransacao.transacoes)
-        {
-            htmlTransacaoItem += `
-                <div class="transacao-item">
-                    <div class="transacao-info">
-                        <span class="tipo">${transacao.tipoTransacao}</span>
-                        <strong class="valor">${formatarMoeda(transacao.valor)}</strong>
-                    </div>
-                    <time class="data">${formatarData(transacao.data, FormatoData.DIA_MES)}</time>
-                </div>
-            `;
+    if (gruposTransacoes.length == 0) {
+        elementoRegistroTransacoesExtrato.innerHTML = "Sem transações";
+        return;
+    }
+
+    for (let grupoTransacao of gruposTransacoes) {
+
+        let htmlGrupo: string = "";
+        let htmlTransacao: string = "";
+
+        for (let transacao of grupoTransacao.transacoes) {
+            
+
+            htmlTransacao += `<div class="transacao-item">
+                                    <div class="transacao-info">
+                                        <span class="tipo">${transacao.getTipoTransacao()}</span>
+                                        <strong class="valor">${formatarMoeda(transacao.getValor())}</strong>
+                                    </div>
+                                    <time class="data">${formatarData(transacao.getData(), FormatoData.DIA_MES)}</time>
+                                </div>`
         }
+        
+        htmlGrupo += `<div class="transacoes-group">
+            <strong class="mes-group">${grupoTransacao.label}</strong>
+            ${htmlTransacao}
+        </div>`;
 
-        htmlRegistroTransacoes += `
-            <div class="transacoes-group">
-                <strong class="mes-group">${grupoTransacao.label}</strong>
-                ${htmlTransacaoItem}
-            </div>
-        `;
+        elementoRegistroTransacoesExtrato.innerHTML += htmlGrupo;
     }
-
-    if (htmlRegistroTransacoes === "") {
-        htmlRegistroTransacoes = "<div>Sem transações.</div>";
-    }
-
-    elementoRegistroTransacoesExtrato.innerHTML = htmlRegistroTransacoes;
-
 }
+
 const ExtratoComponent = {
-    
     atualizar(): void {
-         extratoConta();
+        gerarExtrato();
     }
 }
+
+gerarExtrato();
 
 export default ExtratoComponent;
